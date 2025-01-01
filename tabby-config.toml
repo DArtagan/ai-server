@@ -1,0 +1,24 @@
+[model.chat.http]
+kind = "openai/chat"
+#model_name = "codestral:22b"
+model_name = "codestral:22b"
+api_endpoint = "http://ollama:11434/v1"
+max_input_length = 128000
+chat_template = "<s>{% for message in messages %}{% if (message['role'] == 'user') != (loop.index0 % 2 == 0) %}{{ raise_exception('Conversation roles must alternate user/assistant/user/assistant/...') }}{% endif %}{% if message['role'] == 'user' %}{{ '[INST] ' + message['content'] + ' [/INST]' }}{% elif message['role'] == 'assistant' %}{{ message['content'] + '</s> ' }}{% else %}{{ raise_exception('Only user and assistant roles are supported!') }}{% endif %}{% endfor %}"  # Codestral
+
+[model.completion.http]
+kind = "ollama/completion"
+model_name = "codellama:7b"
+#model_name = "codestral:22b"
+#model_name = "codegemma:7b-code"
+api_endpoint = "http://ollama:11434"
+prompt_template = "<PRE> {prefix} <SUF>{suffix} <MID>"  # CodeLlama
+#prompt_template = "[SUFFIX]{suffix}[PREFIX]{prefix}"  # Codestral
+#prompt_template = "<|fim_prefix|>{prefix}<|fim_suffix|>{suffix}<|fim_middle|>"  # For CodeGemma
+max_input_length = 128000
+
+[model.embedding.http]
+kind = "ollama/embedding"
+model_name = "nomic-embed-text"
+api_endpoint = "http://ollama:11434"
+

@@ -1,0 +1,54 @@
+services:
+  #reverse-proxy:
+  #  image: jwilder/nginx-proxy
+  #  # consider: linuxserver/swag
+  #  ports:
+  #    - "80:80"
+  #  volumes:
+  #    - /var/run/docker.sock:/tmp/docker.sock:ro
+  ollama:
+    image: ollama/ollama
+    ports:
+      - "11434:11434"
+    restart: always
+    volumes:
+      - ./data/ollama:/root/.ollama
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+  open-webui:
+    image: ghcr.io/open-webui/open-webui:main
+    environment:
+      - WEBUI_AUTH=False
+      - VIRTUAL_HOST=open-webui.local
+    restart: always
+    ports:
+      - "3000:8080"
+    volumes:
+      - ./data/open-webui:/app/backend/data 
+  tabby:
+    image: tabbyml/tabby
+    environment:
+      - RUST_BACKTRACE=1
+      - VIRTUAL_HOST=tabby.local
+    ports:
+      - "8080:8080"
+    restart: always
+    volumes:
+      - ./data/tabby:/data
+      - ./tabby-config.toml:/data/config.toml
+    command:
+      - serve
+      - --device
+      - cuda
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
