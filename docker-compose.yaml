@@ -12,7 +12,7 @@ services:
       - "11434:11434"
     restart: always
     volumes:
-      - ./data/ollama:/root/.ollama
+      - /mnt/mamba/ollama:/root/.ollama
     deploy:
       resources:
         reservations:
