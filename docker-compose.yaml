@@ -13,12 +13,18 @@ services:
     restart: always
     volumes:
       - /mnt/mamba/ollama:/root/.ollama
+      - ./data/ollama:/root/.ollama
     deploy:
       resources:
         reservations:
+          #devices:
+          #  - driver: nvidia
+          #    count: all
+          #    capabilities: [gpu]
           devices:
-            - driver: nvidia
-              count: 1
+            - driver: cdi
+              device_ids:
+                - nvidia.com/gpu=all
               capabilities: [gpu]
   open-webui:
     image: ghcr.io/open-webui/open-webui:main
@@ -30,25 +36,25 @@ services:
       - "3000:8080"
     volumes:
       - ./data/open-webui:/app/backend/data 
-  tabby:
-    image: tabbyml/tabby
-    environment:
-      - RUST_BACKTRACE=1
-      - VIRTUAL_HOST=tabby.local
-    ports:
-      - "8080:8080"
-    restart: always
-    volumes:
-      - ./data/tabby:/data
-      - ./tabby-config.toml:/data/config.toml
-    command:
-      - serve
-      - --device
-      - cuda
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              count: 1
-              capabilities: [gpu]
+  #tabby:
+  #  image: tabbyml/tabby
+  #  environment:
+  #    - RUST_BACKTRACE=1
+  #    - VIRTUAL_HOST=tabby.local
+  #  ports:
+  #    - "8080:8080"
+  #  restart: always
+  #  volumes:
+  #    - ./data/tabby:/data
+  #    - ./tabby-config.toml:/data/config.toml
+  #  command:
+  #    - serve
+  #    - --device
+  #    - cuda
+  #  deploy:
+  #    resources:
+  #      reservations:
+  #        devices:
+  #          - driver: nvidia
+  #            count: 1
+  #            capabilities: [gpu]
