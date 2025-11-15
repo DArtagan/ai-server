@@ -35,7 +35,7 @@ services:
     ports:
       - "3000:8080"
     volumes:
-      - ./data/open-webui:/app/backend/data 
+      - /mnt/mamba/open-webui:/app/backend/data 
   #tabby:
   #  image: tabbyml/tabby
   #  environment:
